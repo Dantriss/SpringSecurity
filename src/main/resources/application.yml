@@ -39,13 +39,12 @@ spring:
               - email
               - profile
 
-#
-#          facebook:
-#            client-id: ???
-#            client-secret: ???
-#            scope:
-#              - email
-#              - public_profile
+          facebook:
+            client-id: 1382882095622700
+            client-secret: 97b2b24dc1beebf15e467d8a5de5ccbd
+            scope:
+              - email
+              - public_profile
 #
 #          # ???? OAuth2.0 ?? ????? ???? provider ??? ????.
 #          # ????? ???, ?? ???? ??? ????.

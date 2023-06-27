@@ -2,6 +2,9 @@ package com.example.springsecurity.oauth;
 
 import com.example.springsecurity.auth.PrincipalDetails;
 import com.example.springsecurity.model.User;
+import com.example.springsecurity.oauth.provider.FacebookUserInfo;
+import com.example.springsecurity.oauth.provider.GoogleUserInfo;
+import com.example.springsecurity.oauth.provider.OAuth2UserInfo;
 import com.example.springsecurity.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,11 +37,19 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         System.out.println("getAccessToken : "+userRequest.getAccessToken());
         System.out.println("getClientRegistration : "+userRequest.getClientRegistration().getRegistrationId());
 
-        String provider =  userRequest.getClientRegistration().getClientId();   //google
-        String providerId = oAuth2User.getAttribute("sub");
-        String username = provider+"_"+providerId;                              //google_0000000
+        OAuth2UserInfo oAuth2UserInfo = null;
+        if(userRequest.getClientRegistration().getRegistrationId().equals("google")){
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+            oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+
+        }
+
+        String provider = oAuth2UserInfo.getProvider();   //google,facebook
+        String providerId = oAuth2UserInfo.getProviderId();
+        String username = provider+"_"+providerId;                                    //google_0000000
         String password = bCryptPasswordEncoder.encode("1111");
-        String email = oAuth2User.getAttribute("email");
+        String email = oAuth2UserInfo.getEmail();
         String role = "ROLE_USER";
 
         User userEntity = userRepository.findByUsername(username);
