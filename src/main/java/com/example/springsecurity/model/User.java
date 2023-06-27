@@ -22,5 +22,4 @@ public class User {
     @CreationTimestamp
     private Timestamp createDate;
 
-
 }
