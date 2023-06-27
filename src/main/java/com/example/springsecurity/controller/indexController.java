@@ -1,5 +1,7 @@
 package com.example.springsecurity.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+import com.example.springsecurity.auth.PrincipalDetails;
 import com.example.springsecurity.model.User;
 import com.example.springsecurity.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,10 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +32,28 @@ public class indexController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @GetMapping("/test")
+    public @ResponseBody String test(Authentication authentication, @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        UserDetails authenticationDetail = (UserDetails) authentication.getPrincipal();
+
+        System.out.println("id test PrincipalDetails : "+principalDetails.getUsername());
+        System.out.println("id test (userDetails)authentication : "+authenticationDetail.getUsername());
+
+        return "테스트입니다.";
+    }
+
+    @GetMapping("/oauthtest")
+    public @ResponseBody String oauthtest(Authentication authentication, @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        OAuth2User authenticationOAuth = (OAuth2User) authentication.getPrincipal();
+
+        System.out.println("id test PrincipalDetails: "+ principalDetails.getAttributes());
+        System.out.println("id test (OAuth2User)authenticationOAuth: "+ authenticationOAuth.getAttributes());
+
+        return "oauth 테스트입니다.";
+    }
+
 
     @GetMapping({ "", "/" })
     public String index(){
@@ -36,11 +63,15 @@ public class indexController {
         return "index"; //src/main/resources/templates/index.java
     }
 
-    @GetMapping("/user")
-    public @ResponseBody String user(Authentication authentication){
 
+    //OAuth 로그인을 해도 PrincipalDetails에서 Oauth2User 상속받았기 때문에 사용가능
+    //일반 로그인을해도 PrincipalDetails에서 userDetails 상속받았기 때문에 사용가
+    @GetMapping("/user")
+    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        System.out.println(principalDetails.getUser());
         return "user";
     }
+
     @GetMapping("/admin")
     public @ResponseBody String admin(){
         return "admin";

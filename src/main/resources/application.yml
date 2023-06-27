@@ -12,8 +12,10 @@ spring:
     url: jdbc:mysql://localhost:3306/security?serverTimezone=Asia/Seoul
     username: 'root'
     password: '1234'
+  main:
+    allow-circular-references: true
 
-# mustache ????? src/main/resources?? ????? ??? ??.
+  # mustache ????? src/main/resources?? ????? ??? ??.
 #  mvc:
 #    view:
 #      prefix: /templates/
@@ -26,16 +28,17 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
 
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google: # /oauth2/authorization/google ? ??? ???? ??.
-#            client-id: ???
-#            client-secret: ???
-#            scope:
-#              - email
-#              - profile
+  security:
+    oauth2:
+      client:
+        registration:
+          google: # /oauth2/authorization/google
+            client-id: 790360916202-hpasega1iestp1ek7d116a2283jbnsab.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+
 #
 #          facebook:
 #            client-id: ???

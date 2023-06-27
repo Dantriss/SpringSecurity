@@ -2,11 +2,14 @@ package com.example.springsecurity.auth;
 
 
 import com.example.springsecurity.model.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 
 // 시큐리티가 /login주소 요청이 오면 낚아채서 로그인을 진행
@@ -15,10 +18,33 @@ import java.util.Collection;
 // Authentication 안에 user 정보가 있어야 하는데  -> UserDetails 타입 객체로 정해져있음
 
 // Security Session -> Authentication -> UserDetails (principalDetails에 userDetails를 오버라이딩해서 사용가능하게 함)
-public class PrincipalDetails implements UserDetails {
-
+@Data
+public class PrincipalDetails implements UserDetails, OAuth2User {
     private User user;  //컴포지션
+    private Map<String,Object> attributes;
 
+    @Override
+    public <A> A getAttribute(String name) {
+        return OAuth2User.super.getAttribute(name);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+    // OAuth로그인 생성자
+    public PrincipalDetails(User user, Map<String,Object> attributes){
+        this.user=user;
+        this.attributes=attributes;
+    }
+
+
+    // 일반로그인 생성자
     public PrincipalDetails(User user){
         this.user=user;
     }
@@ -72,4 +98,5 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
