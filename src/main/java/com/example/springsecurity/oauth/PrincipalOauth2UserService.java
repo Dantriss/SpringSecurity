@@ -4,6 +4,7 @@ import com.example.springsecurity.auth.PrincipalDetails;
 import com.example.springsecurity.model.User;
 import com.example.springsecurity.oauth.provider.FacebookUserInfo;
 import com.example.springsecurity.oauth.provider.GoogleUserInfo;
+import com.example.springsecurity.oauth.provider.NaverUserInfo;
 import com.example.springsecurity.oauth.provider.OAuth2UserInfo;
 import com.example.springsecurity.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
@@ -42,6 +45,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
         } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
             oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+            oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
 
         }
 
