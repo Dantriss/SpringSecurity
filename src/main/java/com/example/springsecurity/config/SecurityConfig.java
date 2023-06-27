@@ -2,6 +2,7 @@ package com.example.springsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,7 +10,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration //메모리에 띄우기 위해서 어노테이션 추가
 @EnableWebSecurity  //활성화 하면 스프링 시큐리티 필터가 스프링 필터체인에 등록이 됨
-public class SecurityConfig  {
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) //secured 어노테이션 활성화, preAuthorize 어노테이션 활성화
+public class SecurityConfig {
 
 
 
@@ -21,18 +23,20 @@ public class SecurityConfig  {
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception{
-        http.csrf().disable();
+
         http.authorizeRequests()
                 .antMatchers("/user/**").authenticated()
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-                .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/manager/**").access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/loginForm")
-                .loginProcessingUrl("/login")  //login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인 진행해줌 -> controller /login 만들필요 없음
-                .defaultSuccessUrl("/");
+                    .loginPage("/loginForm")
+                    .loginProcessingUrl("/login")  //login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인 진행해줌 -> controller /login 만들필요 없음
+                    .defaultSuccessUrl("/")
+                .and()
+                    .csrf().disable();
+
         return http.build();
 
     }
