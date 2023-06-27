@@ -11,7 +11,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity  //활성화 하면 스프링 시큐리티 필터가 스프링 필터체인에 등록이 됨
 public class SecurityConfig  {
 
-    @Bean
+
+
+    @Bean   //Bean 등록하면 해당 메서드의 리턴되는 오브젝트를 IoC로 등록해준다.
+
     BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
